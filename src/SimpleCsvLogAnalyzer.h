@@ -58,8 +58,10 @@ public:
     ~SimpleCsvLogAnalyzer();
 
     void plotGraph(QString xName, QString yName);
+    void addPlotGraph(QString yName);
 
 private slots:
+    void onMouseWheel(QWheelEvent *event);
     void on_actionExit_triggered();
     void on_actionOpen_triggered();
     void on_plotSelected_clicked();
@@ -139,14 +141,17 @@ private:
     QStringList mathOperatorsList = QStringList() << "+" << "-" << "*" << "/";
     QString mathStringStart = QString("_drvd(");
     QString mathStringEnd = QString(")_");
-    QString torqueDeviceTimeFormat = QString("d-MMM-yyyy HH:mm:ss.zzz");   // e.g. 12-Jul-2015 22:15:00.473
+    QString torqueDeviceTimeFormat = QString("yyyy-MM-d HH:mm:ss.zzz");   // e.g. 12-Jul-2015 22:15:00.473
     QLocale defaultEngLocale = QLocale(QLocale::English, QLocale::UnitedStates);
     QStringList m_labels,m_sampleValues;
     int plotType = PLOT_NONE;
     double zoomCursorCenter = 0;
 
+    int plot_count=0;
+    int ySelectIndex = 0;
+
     // Plots
-    QCPGraph *valuePlot;
+    QCPGraph *valuePlot[32];
     QCPGraph *cursorPlot;
 
 #ifdef Q_OS_ANDROID

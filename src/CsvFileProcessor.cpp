@@ -62,8 +62,9 @@ QStringList CsvFileProcessor::getCsvFileLabels()
     }
     m_file.seek(0); // seek to start of the file
     // Get value field names from first line
-    //QString str = QString::fromUtf8(m_file.readLine());
-    QString str = QString::fromUtf8(readLineFromCSV(&m_file));
+    QString str = QString::fromUtf8(readLineFromCSV(&m_file));// dummy read line
+    str = QString::fromUtf8(readLineFromCSV(&m_file));// dummy read line
+    str = QString::fromUtf8(readLineFromCSV(&m_file));
     //qDebug() << "Titles:" << str;
     m_valueNames = str.split(valueSeperator);
     for(int i=0;i<m_valueNames.length();++i){
@@ -82,7 +83,9 @@ QStringList CsvFileProcessor::getSampleValuesForLabels()
         return values4Labels;
     }
     m_file.seek(0); // seek to start of the file
-    readLineFromCSV(&m_file); // skip labels
+    readLineFromCSV(&m_file);// dummy read line
+    readLineFromCSV(&m_file);// dummy read line
+    readLineFromCSV(&m_file);// dummy read line
     // Get value field names from first line
     //QString str = QString::fromUtf8(m_file.readLine());
     QString str = QString::fromUtf8(readLineFromCSV(&m_file));
@@ -109,6 +112,8 @@ QVector<double> CsvFileProcessor::getDataByName(QString dataName)
     QString str;
     QStringList strList;
     m_file.seek(0); // seek to start of the file
+    m_file.readLine(); // dummy read
+    m_file.readLine(); // dummy read
     readLineFromCSV(&m_file); // skip labels
     str = QString::fromUtf8(readLineFromCSV(&m_file));
     while(!str.isEmpty()){
@@ -144,6 +149,8 @@ QStringList CsvFileProcessor::getRawDataByName(QString dataName)
     QString str;
     QStringList strList;
     m_file.seek(0); // seek to start of the file
+    m_file.readLine(); // dummy read
+    m_file.readLine(); // dummy read
     readLineFromCSV(&m_file); // skip labels
     str = QString::fromUtf8(readLineFromCSV(&m_file));
     while(!str.isEmpty()){
@@ -177,6 +184,8 @@ bool CsvFileProcessor::file2TableWidget(QTableWidget *tw)
 
 
     m_file.seek(0); // seek to start of the file
+    m_file.readLine(); // dummy read
+    m_file.readLine(); // dummy read
     readLineFromCSV(&m_file); // skip labels
     str = QString::fromUtf8(readLineFromCSV(&m_file));
     int rowNum = 0;
@@ -214,6 +223,8 @@ bool CsvFileProcessor::file2DataModel(QStandardItemModel *mdl)
     mdl->setHorizontalHeaderLabels(values);
 
     m_file.seek(0); // seek to start of the file
+    m_file.readLine(); // dummy read
+    m_file.readLine(); // dummy read
     readLineFromCSV(&m_file); // skip labels
     str = QString::fromUtf8(readLineFromCSV(&m_file));
     int rowNum = 0;

@@ -17812,6 +17812,7 @@ void QCPAxisRect::mousePressEvent(QMouseEvent *event, const QVariant &details)
   if (event->buttons() & Qt::LeftButton)
   {
     mDragging = true;
+    setRangeDrag(Qt::Horizontal);
     // initialize antialiasing backup in case we start dragging:
     if (mParentPlot->noAntialiasingOnDrag())
     {
@@ -17824,6 +17825,27 @@ void QCPAxisRect::mousePressEvent(QMouseEvent *event, const QVariant &details)
       mDragStartHorzRange.clear();
       for (int i=0; i<mRangeDragHorzAxis.size(); ++i)
         mDragStartHorzRange.append(mRangeDragHorzAxis.at(i).isNull() ? QCPRange() : mRangeDragHorzAxis.at(i)->range());
+      mDragStartVertRange.clear();
+      for (int i=0; i<mRangeDragVertAxis.size(); ++i)
+        mDragStartVertRange.append(mRangeDragVertAxis.at(i).isNull() ? QCPRange() : mRangeDragVertAxis.at(i)->range());
+    }
+  }
+  if (event->buttons() & Qt::RightButton)
+  {
+    mDragging = true;
+    setRangeDrag(Qt::Vertical);
+    // initialize antialiasing backup in case we start dragging:
+    if (mParentPlot->noAntialiasingOnDrag())
+    {
+      mAADragBackup = mParentPlot->antialiasedElements();
+      mNotAADragBackup = mParentPlot->notAntialiasedElements();
+    }
+    // Mouse range dragging interaction:
+    if (mParentPlot->interactions().testFlag(QCP::iRangeDrag))
+    {
+      mDragStartVertRange.clear();
+      for (int i=0; i<mRangeDragVertAxis.size(); ++i)
+        mDragStartVertRange.append(mRangeDragVertAxis.at(i).isNull() ? QCPRange() : mRangeDragVertAxis.at(i)->range());
       mDragStartVertRange.clear();
       for (int i=0; i<mRangeDragVertAxis.size(); ++i)
         mDragStartVertRange.append(mRangeDragVertAxis.at(i).isNull() ? QCPRange() : mRangeDragVertAxis.at(i)->range());
@@ -17926,6 +17948,10 @@ void QCPAxisRect::mouseReleaseEvent(QMouseEvent *event, const QPointF &startPos)
 */
 void QCPAxisRect::wheelEvent(QWheelEvent *event)
 {
+  if (QApplication::keyboardModifiers() == Qt::ShiftModifier)
+  {
+     return;
+  }
   // Mouse range zooming interaction:
   if (mParentPlot->interactions().testFlag(QCP::iRangeZoom))
   {

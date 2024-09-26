@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'SimpleCsvLogAnalyzer.ui'
 **
-** Created by: Qt User Interface Compiler version 5.14.2
+** Created by: Qt User Interface Compiler version 5.15.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -74,13 +74,10 @@ public:
     QLabel *label_2;
     QListWidget *dataListY;
     QVBoxLayout *verticalLayout_5;
-    QLabel *label_3;
-    QListWidget *dataListX;
     QFrame *line_11;
     QHBoxLayout *horizontalLayout;
     QToolButton *plotSelected;
     QToolButton *plotSelectedXY;
-    QToolButton *DataDerivator;
     QWidget *quickPlotPresets;
     QGridLayout *gridLayout_2;
     QToolButton *predefinedPlot1;
@@ -100,7 +97,7 @@ public:
     {
         if (SimpleCsvLogAnalyzer->objectName().isEmpty())
             SimpleCsvLogAnalyzer->setObjectName(QString::fromUtf8("SimpleCsvLogAnalyzer"));
-        SimpleCsvLogAnalyzer->resize(640, 721);
+        SimpleCsvLogAnalyzer->resize(640, 725);
         QFont font;
         font.setFamily(QString::fromUtf8("Arial"));
         SimpleCsvLogAnalyzer->setFont(font);
@@ -113,7 +110,6 @@ public:
         font1.setFamily(QString::fromUtf8("Arial"));
         font1.setPointSize(10);
         font1.setBold(true);
-        font1.setWeight(75);
         actionOpen->setFont(font1);
         actionExit = new QAction(SimpleCsvLogAnalyzer);
         actionExit->setObjectName(QString::fromUtf8("actionExit"));
@@ -131,16 +127,19 @@ public:
         actionSave_Plot_Image->setFont(font1);
         actionData_Derivator = new QAction(SimpleCsvLogAnalyzer);
         actionData_Derivator->setObjectName(QString::fromUtf8("actionData_Derivator"));
+        actionData_Derivator->setEnabled(true);
         QIcon icon3;
         icon3.addFile(QString::fromUtf8(":/images/images/function.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionData_Derivator->setIcon(icon3);
         actionData_Derivator->setFont(font1);
         actionPlot_SelectedData = new QAction(SimpleCsvLogAnalyzer);
         actionPlot_SelectedData->setObjectName(QString::fromUtf8("actionPlot_SelectedData"));
+        actionPlot_SelectedData->setEnabled(false);
         QIcon icon4;
         icon4.addFile(QString::fromUtf8(":/images/images/ploty.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionPlot_SelectedData->setIcon(icon4);
         actionPlot_SelectedData->setFont(font1);
+        actionPlot_SelectedData->setVisible(false);
         actionplot_SelectedDataVsSelectedData = new QAction(SimpleCsvLogAnalyzer);
         actionplot_SelectedDataVsSelectedData->setObjectName(QString::fromUtf8("actionplot_SelectedDataVsSelectedData"));
         QIcon icon5;
@@ -304,6 +303,7 @@ public:
         mainHorizontalLayout->setObjectName(QString::fromUtf8("mainHorizontalLayout"));
         rightTabs = new QTabWidget(centralwidget);
         rightTabs->setObjectName(QString::fromUtf8("rightTabs"));
+        rightTabs->setEnabled(true);
         rightTabs->setFont(font1);
         plotTab = new QWidget();
         plotTab->setObjectName(QString::fromUtf8("plotTab"));
@@ -320,7 +320,6 @@ public:
         font5.setFamily(QString::fromUtf8("Arial"));
         font5.setPointSize(7);
         font5.setBold(true);
-        font5.setWeight(75);
         plot1->setFont(font5);
         verticalLayout_4 = new QVBoxLayout(plot1);
         verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
@@ -348,7 +347,6 @@ public:
         font6.setFamily(QString::fromUtf8("Arial"));
         font6.setPointSize(9);
         font6.setBold(true);
-        font6.setWeight(75);
         label_2->setFont(font6);
 
         verticalLayout->addWidget(label_2);
@@ -361,7 +359,6 @@ public:
         font7.setFamily(QString::fromUtf8("Arial"));
         font7.setPointSize(11);
         font7.setBold(true);
-        font7.setWeight(75);
         dataListY->setFont(font7);
         dataListY->setContextMenuPolicy(Qt::CustomContextMenu);
         dataListY->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -378,28 +375,6 @@ public:
 
         verticalLayout_5 = new QVBoxLayout();
         verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
-        label_3 = new QLabel(dataTableViewTab);
-        label_3->setObjectName(QString::fromUtf8("label_3"));
-        sizePolicy1.setHeightForWidth(label_3->sizePolicy().hasHeightForWidth());
-        label_3->setSizePolicy(sizePolicy1);
-        label_3->setMaximumSize(QSize(16777215, 16777215));
-        label_3->setFont(font6);
-
-        verticalLayout_5->addWidget(label_3);
-
-        dataListX = new QListWidget(dataTableViewTab);
-        dataListX->setObjectName(QString::fromUtf8("dataListX"));
-        sizePolicy.setHeightForWidth(dataListX->sizePolicy().hasHeightForWidth());
-        dataListX->setSizePolicy(sizePolicy);
-        dataListX->setFont(font7);
-        dataListX->setEditTriggers(QAbstractItemView::DoubleClicked);
-        dataListX->setProperty("showDropIndicator", QVariant(false));
-        dataListX->setDragDropMode(QAbstractItemView::NoDragDrop);
-        dataListX->setDefaultDropAction(Qt::IgnoreAction);
-        dataListX->setSelectionMode(QAbstractItemView::SingleSelection);
-
-        verticalLayout_5->addWidget(dataListX);
-
 
         horizontalLayout_2->addLayout(verticalLayout_5);
 
@@ -437,16 +412,6 @@ public:
 
         horizontalLayout->addWidget(plotSelectedXY);
 
-        DataDerivator = new QToolButton(dataTableViewTab);
-        DataDerivator->setObjectName(QString::fromUtf8("DataDerivator"));
-        DataDerivator->setMaximumSize(QSize(16777215, 16777215));
-        DataDerivator->setFont(font6);
-        DataDerivator->setIcon(icon3);
-        DataDerivator->setIconSize(QSize(48, 48));
-        DataDerivator->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-
-        horizontalLayout->addWidget(DataDerivator);
-
 
         verticalLayout_6->addLayout(horizontalLayout);
 
@@ -460,9 +425,7 @@ public:
         predefinedPlot1->setObjectName(QString::fromUtf8("predefinedPlot1"));
         sizePolicy.setHeightForWidth(predefinedPlot1->sizePolicy().hasHeightForWidth());
         predefinedPlot1->setSizePolicy(sizePolicy);
-        QFont font8;
-        font8.setPointSize(11);
-        predefinedPlot1->setFont(font8);
+        predefinedPlot1->setFont(font7);
         predefinedPlot1->setLayoutDirection(Qt::LeftToRight);
         predefinedPlot1->setAutoFillBackground(false);
         QIcon icon8;
@@ -478,7 +441,7 @@ public:
         predefinedPlot2->setObjectName(QString::fromUtf8("predefinedPlot2"));
         sizePolicy.setHeightForWidth(predefinedPlot2->sizePolicy().hasHeightForWidth());
         predefinedPlot2->setSizePolicy(sizePolicy);
-        predefinedPlot2->setFont(font8);
+        predefinedPlot2->setFont(font7);
         predefinedPlot2->setLayoutDirection(Qt::LeftToRight);
         predefinedPlot2->setAutoFillBackground(false);
         predefinedPlot2->setIcon(icon8);
@@ -492,7 +455,7 @@ public:
         predefinedPlot9->setObjectName(QString::fromUtf8("predefinedPlot9"));
         sizePolicy.setHeightForWidth(predefinedPlot9->sizePolicy().hasHeightForWidth());
         predefinedPlot9->setSizePolicy(sizePolicy);
-        predefinedPlot9->setFont(font8);
+        predefinedPlot9->setFont(font7);
         predefinedPlot9->setLayoutDirection(Qt::LeftToRight);
         predefinedPlot9->setAutoFillBackground(false);
         predefinedPlot9->setIcon(icon8);
@@ -506,7 +469,7 @@ public:
         predefinedPlot5->setObjectName(QString::fromUtf8("predefinedPlot5"));
         sizePolicy.setHeightForWidth(predefinedPlot5->sizePolicy().hasHeightForWidth());
         predefinedPlot5->setSizePolicy(sizePolicy);
-        predefinedPlot5->setFont(font8);
+        predefinedPlot5->setFont(font7);
         predefinedPlot5->setLayoutDirection(Qt::LeftToRight);
         predefinedPlot5->setAutoFillBackground(false);
         predefinedPlot5->setIcon(icon8);
@@ -520,7 +483,7 @@ public:
         predefinedPlot7->setObjectName(QString::fromUtf8("predefinedPlot7"));
         sizePolicy.setHeightForWidth(predefinedPlot7->sizePolicy().hasHeightForWidth());
         predefinedPlot7->setSizePolicy(sizePolicy);
-        predefinedPlot7->setFont(font8);
+        predefinedPlot7->setFont(font7);
         predefinedPlot7->setLayoutDirection(Qt::LeftToRight);
         predefinedPlot7->setAutoFillBackground(false);
         predefinedPlot7->setIcon(icon8);
@@ -534,7 +497,7 @@ public:
         predefinedPlot6->setObjectName(QString::fromUtf8("predefinedPlot6"));
         sizePolicy.setHeightForWidth(predefinedPlot6->sizePolicy().hasHeightForWidth());
         predefinedPlot6->setSizePolicy(sizePolicy);
-        predefinedPlot6->setFont(font8);
+        predefinedPlot6->setFont(font7);
         predefinedPlot6->setLayoutDirection(Qt::LeftToRight);
         predefinedPlot6->setAutoFillBackground(false);
         predefinedPlot6->setIcon(icon8);
@@ -548,7 +511,7 @@ public:
         predefinedPlot3->setObjectName(QString::fromUtf8("predefinedPlot3"));
         sizePolicy.setHeightForWidth(predefinedPlot3->sizePolicy().hasHeightForWidth());
         predefinedPlot3->setSizePolicy(sizePolicy);
-        predefinedPlot3->setFont(font8);
+        predefinedPlot3->setFont(font7);
         predefinedPlot3->setLayoutDirection(Qt::LeftToRight);
         predefinedPlot3->setAutoFillBackground(false);
         predefinedPlot3->setIcon(icon8);
@@ -562,7 +525,7 @@ public:
         predefinedPlot4->setObjectName(QString::fromUtf8("predefinedPlot4"));
         sizePolicy.setHeightForWidth(predefinedPlot4->sizePolicy().hasHeightForWidth());
         predefinedPlot4->setSizePolicy(sizePolicy);
-        predefinedPlot4->setFont(font8);
+        predefinedPlot4->setFont(font7);
         predefinedPlot4->setLayoutDirection(Qt::LeftToRight);
         predefinedPlot4->setAutoFillBackground(false);
         predefinedPlot4->setIcon(icon8);
@@ -576,7 +539,7 @@ public:
         predefinedPlot8->setObjectName(QString::fromUtf8("predefinedPlot8"));
         sizePolicy.setHeightForWidth(predefinedPlot8->sizePolicy().hasHeightForWidth());
         predefinedPlot8->setSizePolicy(sizePolicy);
-        predefinedPlot8->setFont(font8);
+        predefinedPlot8->setFont(font7);
         predefinedPlot8->setLayoutDirection(Qt::LeftToRight);
         predefinedPlot8->setAutoFillBackground(false);
         predefinedPlot8->setIcon(icon8);
@@ -590,7 +553,7 @@ public:
         predefinedPlot10->setObjectName(QString::fromUtf8("predefinedPlot10"));
         sizePolicy.setHeightForWidth(predefinedPlot10->sizePolicy().hasHeightForWidth());
         predefinedPlot10->setSizePolicy(sizePolicy);
-        predefinedPlot10->setFont(font8);
+        predefinedPlot10->setFont(font7);
         predefinedPlot10->setLayoutDirection(Qt::LeftToRight);
         predefinedPlot10->setAutoFillBackground(false);
         predefinedPlot10->setIcon(icon8);
@@ -638,7 +601,7 @@ public:
 
     void retranslateUi(QMainWindow *SimpleCsvLogAnalyzer)
     {
-        SimpleCsvLogAnalyzer->setWindowTitle(QCoreApplication::translate("SimpleCsvLogAnalyzer", "SimpleCsvLogAnalyzer", nullptr));
+        SimpleCsvLogAnalyzer->setWindowTitle(QCoreApplication::translate("SimpleCsvLogAnalyzer", "GTM CSV Log Analyzer V1.3 [ Coskun ERGAN ]", nullptr));
         actionOpen->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Open File", nullptr));
         actionExit->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Exit", nullptr));
 #if QT_CONFIG(shortcut)
@@ -652,9 +615,9 @@ public:
 #if QT_CONFIG(shortcut)
         actionSave_Plot_Image->setShortcut(QCoreApplication::translate("SimpleCsvLogAnalyzer", "S", nullptr));
 #endif // QT_CONFIG(shortcut)
-        actionData_Derivator->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Data Derivator", nullptr));
-        actionPlot_SelectedData->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Plot Y", nullptr));
-        actionplot_SelectedDataVsSelectedData->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "plot Y-X", nullptr));
+        actionData_Derivator->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Fit Y Scale", nullptr));
+        actionPlot_SelectedData->setText(QString());
+        actionplot_SelectedDataVsSelectedData->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Clear Plots", nullptr));
         actionZoom_In->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Zoom In", nullptr));
         actionZoom_Out->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Zoom Out", nullptr));
         minValueY->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Min Y: nan", nullptr));
@@ -668,21 +631,19 @@ public:
         spanValueX->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Span X: nan", nullptr));
         rightTabs->setTabText(rightTabs->indexOf(plotTab), QCoreApplication::translate("SimpleCsvLogAnalyzer", "Plot", nullptr));
         label_2->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Y Axis Data List", nullptr));
-        label_3->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "X Axis Data List", nullptr));
-        plotSelected->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Plot Selected Data vs Index", nullptr));
-        plotSelectedXY->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Plot Selected Y-X Data", nullptr));
-        DataDerivator->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Data Derivator", nullptr));
+        plotSelected->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "       Add Plot Data       ", nullptr));
+        plotSelectedXY->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "         Clear Plot Data      ", nullptr));
         rightTabs->setTabText(rightTabs->indexOf(dataTableViewTab), QCoreApplication::translate("SimpleCsvLogAnalyzer", "Data Labels", nullptr));
-        predefinedPlot1->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Speed (OBD) vs Time", nullptr));
-        predefinedPlot2->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Speed (GPS) vs Time", nullptr));
-        predefinedPlot9->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "RPM vs Time", nullptr));
-        predefinedPlot5->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "LTFT1 vs Time", nullptr));
-        predefinedPlot7->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "STFT1 vs Time", nullptr));
-        predefinedPlot6->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "LTFT1+STFT1 vs RPM", nullptr));
-        predefinedPlot3->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Altitude vs Time", nullptr));
-        predefinedPlot4->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Avg. Consumption vs Time", nullptr));
-        predefinedPlot8->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "Speed (OBD) / RPM vs Time", nullptr));
-        predefinedPlot10->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "LTFT1+STFT1 vs Time", nullptr));
+        predefinedPlot1->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "4x Get Powers", nullptr));
+        predefinedPlot2->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "4x DutyCycle", nullptr));
+        predefinedPlot9->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "---", nullptr));
+        predefinedPlot5->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "---", nullptr));
+        predefinedPlot7->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "---", nullptr));
+        predefinedPlot6->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "---", nullptr));
+        predefinedPlot3->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "4x Dedect CutOff Limits", nullptr));
+        predefinedPlot4->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "4 x Dedect Current", nullptr));
+        predefinedPlot8->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "---", nullptr));
+        predefinedPlot10->setText(QCoreApplication::translate("SimpleCsvLogAnalyzer", "--", nullptr));
         rightTabs->setTabText(rightTabs->indexOf(quickPlotPresets), QCoreApplication::translate("SimpleCsvLogAnalyzer", "Quick Plots", nullptr));
         toolBar->setWindowTitle(QCoreApplication::translate("SimpleCsvLogAnalyzer", "toolBar", nullptr));
     } // retranslateUi

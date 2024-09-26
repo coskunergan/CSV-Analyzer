@@ -25,7 +25,7 @@ public:
     bool file2TableWidget(QTableWidget *tw);
 
     // variables
-    QString valueSeperator = QString(",");
+    QString valueSeperator = QString(";");
 
 public slots:
 

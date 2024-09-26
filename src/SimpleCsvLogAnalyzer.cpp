@@ -77,12 +77,12 @@ void SimpleCsvLogAnalyzer::initPlot(){
     //
 
     // Create value and cursor plot
-    valuePlot = ui->plot1->addGraph();
+    ui->plot1->legend->setBrush(Qt::lightGray);
+    ui->plot1->legend->setVisible(true);
     //cursorPlot = ui->plot1->addGraph();
 
-
-
     // Allow draggingplot in X axis only (horizontal)
+    ui->plot1->setBackground(Qt::lightGray);
     ui->plot1->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     ui->plot1->axisRect()->setRangeDrag(Qt::Horizontal);
     ui->plot1->axisRect()->setRangeZoom(Qt::Horizontal);
@@ -98,15 +98,27 @@ void SimpleCsvLogAnalyzer::initPlot(){
     verticalLine->setName("Vertical");
     verticalLine->setData(x, y);
     tracer = new QCPItemTracer(ui->plot1);
-
+    ui->plot1->legend->itemWithPlottable(verticalLine)->setVisible(false);
+    ui->plot1->legend->clearItems();
+    ui->plot1->legend->setBorderPen(QPen(Qt::lightGray));
+    ui->plot1->legend->setBrush(QColor(255, 255, 255, 0));// transparan
     tracer->setStyle(QCPItemTracer::tsCrosshair);
     tracer->setPen(QPen(Qt::darkGray));
+
+
+    for(int i=0;i<32;i++)
+    {
+        valuePlot[i] = ui->plot1->addGraph();
+        ui->plot1->legend->itemWithPlottable(valuePlot[i])->setVisible(false);
+    }
 
 #ifdef Q_OS_ANDROID
     connect(ui->plot1, &QCustomPlot::mouseRelease, this, &SimpleCsvLogAnalyzer::tracerEvent);
 #else
     connect(ui->plot1, &QCustomPlot::mouseMove, this, &SimpleCsvLogAnalyzer::tracerEvent);
 #endif
+
+    connect(ui->plot1, &QCustomPlot::mouseWheel, this, &SimpleCsvLogAnalyzer::onMouseWheel);
 }
 
 //void SimpleCsvLogAnalyzer::initDataTable()
@@ -118,23 +130,40 @@ void SimpleCsvLogAnalyzer::initPlot(){
 void SimpleCsvLogAnalyzer::clearPlotNDisableTracer(){
     xVals.clear();
     yVals.clear();
-    valuePlot->setData(xVals,yVals);
+    for(int i = 0; i <= plot_count; i++)
+    {
+        valuePlot[i]->setData(xVals,yVals);
+    }
     tracer->setGraph(nullptr);
     ui->plot1->replot();
 }
 
 void SimpleCsvLogAnalyzer::setupTracer()
 {
-    tracer->setGraph(valuePlot);
+    //tracer->setGraph(valuePlot[ySelectIndex]);
 }
 
 void SimpleCsvLogAnalyzer::zoomReset(){
     // Rescales X axis using default method (min and max of x values)
     // rescales Y axis using min and max of Y axis values, with a margin of 1/10th of the span
     // to provide better visibilty for peaks and valleys in plot curve
-    valuePlot->rescaleKeyAxis();
+    ySelectIndex = 0;
+    bool test_bool;
+    QCPRange yRange;
+    double yMax = 0;
+    for(int i=0; i <= plot_count; i++)
+    {
+        yRange = valuePlot[i]->getValueRange(test_bool);
+        if(yRange.upper > yMax)
+        {
+            yMax = yRange.upper;
+            ySelectIndex = i;
+        }
+    }
+    valuePlot[ySelectIndex]->rescaleKeyAxis();
     double span = stats.y.span;
-    if(span==0){
+    if(span==0)
+    {
         span = 10;
     }
     ui->plot1->yAxis->setRange(stats.y.min-0.1*span,stats.y.max+0.1*span);
@@ -399,7 +428,6 @@ QString SimpleCsvLogAnalyzer::createDerivedDataLabel(QStringList formula)
     }
     derivedDataLabel += mathStringEnd;
     ui->dataListY->addItem(derivedDataLabel);
-    ui->dataListX->addItem(derivedDataLabel);
     qDebug() << "Derived data  name:" << derivedDataLabel << "data length:" << dd.length();
     derivedDataVector.append(dd);
     derivedDataVectorLabels.append(derivedDataLabel);
@@ -409,6 +437,8 @@ QString SimpleCsvLogAnalyzer::createDerivedDataLabel(QStringList formula)
 
 void SimpleCsvLogAnalyzer::on_actionOpen_triggered()
 {
+
+    on_plotSelectedXY_clicked();
     QString filePath;
 #ifdef Q_OS_ANDROID
     CustomFileDialog *dlg = new CustomFileDialog(this);
@@ -438,7 +468,6 @@ void SimpleCsvLogAnalyzer::on_actionOpen_triggered()
     derivedDataVector.clear();
     derivedDataVectorLabels.clear();
 
-    ui->dataListX->clear();
     ui->dataListY->clear();
 
     clearPlotNDisableTracer();
@@ -449,11 +478,15 @@ void SimpleCsvLogAnalyzer::on_actionOpen_triggered()
     m_labels = csvFile.getCsvFileLabels();
     m_sampleValues = csvFile.getSampleValuesForLabels();
     ui->dataListY->addItems(m_labels);
-    ui->dataListX->addItems(m_labels);
     //    csvFile.file2TableWidget(ui->dataTableWidget);
 
     // Get real time data from "Device Time" label than convert it to msecFromEpoch
-    QStringList timeStr = csvFile.getRawDataByName("Device Time");
+    QStringList timeStr = csvFile.getRawDataByName("time");
+
+    if(timeStr.isEmpty())
+    {
+        timeStr = csvFile.getRawDataByName("");
+    }
     if(timeStr.isEmpty()){
         showMessage("Device time values could not be read from log file!\n"
                     "All Y plots will be plotted with respect to file record(sample) number!\n"
@@ -465,8 +498,8 @@ void SimpleCsvLogAnalyzer::on_actionOpen_triggered()
         QDateTime tmp;
         bool started = false;
         for (int i=0;i<timeStr.length();++i) {
-            tmp = defaultEngLocale.toDateTime(timeStr[i],torqueDeviceTimeFormat);
-            //tmp = QDateTime::fromString(timeStr[i],torqueDeviceTimeFormat);
+            //tmp = defaultEngLocale.toDateTime(timeStr[i],torqueDeviceTimeFormat);
+            tmp = QDateTime::fromString(timeStr[i],torqueDeviceTimeFormat);
             if(tmp.isValid()){
                 if(!started){
                     startOfLog = tmp.toMSecsSinceEpoch();
@@ -483,13 +516,12 @@ void SimpleCsvLogAnalyzer::on_actionOpen_triggered()
             derivedDataLabel += "mSecSinceEpoch";
             derivedDataLabel += mathStringEnd;
             ui->dataListY->addItem(derivedDataLabel);
-            ui->dataListX->addItem(derivedDataLabel);
             qDebug() << "Derived data  name:" << derivedDataLabel << "data length:" << timeMSecSinceEpoch.length();
             derivedDataVector.append(timeMSecSinceEpoch);
             derivedDataVectorLabels.append(derivedDataLabel);
         } else {
             showMessage("mSecSinceEpoch derivation error!\n"
-                        "Check log file and make sure \"Device Time\ has a format like" + torqueDeviceTimeFormat);
+                        "Check log file and make sure \"Device Time\ has a format like " + torqueDeviceTimeFormat);
         }
 
         // Add time: seconds since log file started
@@ -499,20 +531,19 @@ void SimpleCsvLogAnalyzer::on_actionOpen_triggered()
             derivedDataLabel += "Time Since Start (s)";
             derivedDataLabel += mathStringEnd;
             ui->dataListY->addItem(derivedDataLabel);
-            ui->dataListX->addItem(derivedDataLabel);
             qDebug() << "Derived data  name:" << derivedDataLabel << "data length:" << timeSecsSinceStart.length();
             derivedDataVector.append(timeSecsSinceStart);
             derivedDataVectorLabels.append(derivedDataLabel);
         } else {
             showMessage("Time Since Start (s) derivation error!\n"
-                        "Check log file and make sure \"Device Time\ has a format like" + torqueDeviceTimeFormat);
+                        "Check log file and make sure \"Device Time\ has a format like " + torqueDeviceTimeFormat);
         }
     }
     stopBusy();
 
 }
 
-void SimpleCsvLogAnalyzer::plotGraph(QString xName, QString yName)
+void SimpleCsvLogAnalyzer::plotGraph(QString xName, QString yName)  // kullanılmıyorrrrr
 {
     if(xName.isEmpty() && yName.isEmpty()){
         qDebug() << "Select label(s) before plotting...";
@@ -573,12 +604,13 @@ void SimpleCsvLogAnalyzer::plotGraph(QString xName, QString yName)
         ui->plot1->xAxis->setLabel(xName);
         ui->plot1->yAxis->setLabel(yName);
         // configure plot style
-        valuePlot->setLineStyle(QCPGraph::lsLine);
-        valuePlot->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDot, 1));
-        valuePlot->setData(xVals,yVals);
-        QPen pen = valuePlot->pen();
+        valuePlot[0]->setLineStyle(QCPGraph::lsLine);
+        valuePlot[0]->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDot, 1));
+        valuePlot[0]->setData(xVals,yVals);
+        QPen pen = valuePlot[0]->pen();
+        pen.setWidth(3);
         pen.setColor(Qt::blue);
-        valuePlot->setPen(pen);
+        valuePlot[0]->setPen(pen);
     } else {
         // Plot Y labels vs Selected X label
         // Get Y Label values
@@ -627,16 +659,17 @@ void SimpleCsvLogAnalyzer::plotGraph(QString xName, QString yName)
         ui->plot1->xAxis->setLabel(xName);
         ui->plot1->yAxis->setLabel(yName);
         // configure plot style
-        valuePlot->setLineStyle(QCPGraph::lsLine);
-        valuePlot->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDot, 3));
-        valuePlot->setData(xVals,yVals);
-        QPen pen = valuePlot->pen();
+        valuePlot[0]->setLineStyle(QCPGraph::lsLine);
+        valuePlot[0]->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDot, 1));
+        valuePlot[0]->setData(xVals,yVals);
+        QPen pen = valuePlot[0]->pen();
+        pen.setWidth(3);
         pen.setColor(Qt::red);
-        valuePlot->setPen(pen);
+        valuePlot[0]->setPen(pen);
     }
 
     qDebug() << xVals.length() << yVals.length();
-    valuePlot->setData(xVals,yVals);
+    valuePlot[0]->setData(xVals,yVals);
 
     setupTracer();
     stats = calculateStatisticalData(xVals,yVals,false);
@@ -645,9 +678,104 @@ void SimpleCsvLogAnalyzer::plotGraph(QString xName, QString yName)
     ui->rightTabs->setCurrentIndex(0);
     stopBusy();
 
+    plot_count = 0;
+
 }
 
-void SimpleCsvLogAnalyzer::on_plotSelected_clicked()
+void SimpleCsvLogAnalyzer::addPlotGraph(QString yName)
+{
+    if(plot_count > 30)
+    {
+        return;
+    }
+    QString xName ="";
+    if(yName.isEmpty()){
+        qDebug() << "Select label(s) before plotting...";
+        return;
+    }
+    startBusy();
+    //clearPlotNDisableTracer();
+
+    // Plot Y labels vs time, if no time info than plot versus data point number
+    if(yName.startsWith(mathStringStart)){
+        qDebug() << "We got derived data here, name:" << yName;
+        qDebug() << "Available derived data labels:" << derivedDataVectorLabels;
+        qDebug() << yName << "index in derivedDataVectorLabels" << derivedDataVectorLabels.indexOf(yName);
+        // Get derived data from buffer
+        if(derivedDataVectorLabels.indexOf(yName)>=0){
+            qDebug() << "We have label for " << yName;
+            if(derivedDataVector.length()>derivedDataVectorLabels.indexOf(yName)){
+                qDebug() << "We have data for " << yName;
+                yVals = derivedDataVector[derivedDataVectorLabels.indexOf(yName)];
+            }
+        }
+    } else {
+        yVals = csvFile.getDataByName(yName);
+    }
+    if(yVals.isEmpty()){
+        ui->statusbar->showMessage("No Y axis data to plot!");
+        showMessage("No Y axis data to plot!");
+        return;
+    }
+    plotType = PLOT_Y_VS_POINT_NUM;
+    // Get X Label values
+    xName = QString("%1%2%3").arg(mathStringStart)
+                .arg("Time Since Start (s)")
+                .arg(mathStringEnd);
+    if(derivedDataVectorLabels.contains(xName)){
+        qDebug() << "We have real time info";
+        qDebug() << xName << "index in derivedDataVectorLabels" << derivedDataVectorLabels.indexOf(xName);
+        // Get derived data from buffer
+        if(derivedDataVectorLabels.indexOf(xName)>=0){
+            qDebug() << "We have label for " << xName;
+            if(derivedDataVector.length()>derivedDataVectorLabels.indexOf(xName)){
+                qDebug() << "We have data for " << xName;
+                xVals = derivedDataVector[derivedDataVectorLabels.indexOf(xName)];
+                xName = "Time Since Start (s)";
+            }
+        }
+    }
+
+    if(xVals.isEmpty()){
+        xName = "Sample Number";
+        xVals.resize(yVals.length());
+        for(int i=0;i<xVals.length();++i){
+            xVals[i] = i;
+        }
+    }
+
+    ui->plot1->xAxis->setLabel(xName);
+    ui->plot1->yAxis->setLabel(yName);
+
+    //valuePlot[plot_count] = ui->plot1->addGraph();
+    // configure plot style
+    valuePlot[plot_count]->setLineStyle(QCPGraph::lsLine);
+    valuePlot[plot_count]->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDot, 5));
+    valuePlot[plot_count]->setData(xVals,yVals);
+    QPen pen = valuePlot[plot_count]->pen();
+    pen.setColor(QColor((plot_count & 1) ? 255 : 0, (plot_count & 2) ? 255: 0, (plot_count & 4) ? 255 : 0, 127));
+    pen.setWidth(3);
+    valuePlot[plot_count]->setPen(pen);
+
+    qDebug() << xVals.length() << yVals.length();
+    valuePlot[plot_count]->addData(xVals,yVals);
+    valuePlot[plot_count]->setName(yName);
+    ui->plot1->legend->itemWithPlottable(valuePlot[plot_count])->setVisible(true);
+
+    setupTracer();
+    zoomReset();
+    if(ySelectIndex == plot_count)
+    {
+        stats = calculateStatisticalData(xVals,yVals,false);
+    }
+    populateStatisticsLabels();
+    zoomReset();
+    ui->rightTabs->setCurrentIndex(1);
+    plot_count++;
+    stopBusy();
+}
+
+void SimpleCsvLogAnalyzer::on_plotSelected_clicked() //add
 {
     // Plots values of selected data name versus recorda/data point
     if(ui->dataListY->selectedItems().isEmpty()){
@@ -658,23 +786,24 @@ void SimpleCsvLogAnalyzer::on_plotSelected_clicked()
 
     QString name = ui->dataListY->selectedItems().first()->text();
 
-    plotGraph("",name);
+    addPlotGraph(name);
 
 }
 
-void SimpleCsvLogAnalyzer::on_plotSelectedXY_clicked()
+void SimpleCsvLogAnalyzer::on_plotSelectedXY_clicked() // Clear ALL
 {
-    // Plots values of selected data name versus selected another data field
-    if(ui->dataListY->selectedItems().isEmpty() | ui->dataListX->selectedItems().isEmpty()){
-        ui->statusbar->showMessage("Select a proper data for both x and y axis!");
-        showMessage("Select a proper data for both x and y axis!");
-        return;
+    xVals.clear();
+    yVals.clear();
+    for(int i = 0; i < plot_count; i++)
+    {
+        valuePlot[i]->setData(xVals,yVals);
+        ui->plot1->legend->itemWithPlottable(valuePlot[i])->setVisible(false);
     }
-
-    QString nameY = ui->dataListY->selectedItems().first()->text();
-    QString nameX = ui->dataListX->selectedItems().first()->text();
-
-    plotGraph(nameX,nameY);
+    //ui->plot1->legend->clear();
+    tracer->setGraph(nullptr);
+    ui->plot1->replot();
+    plot_count=0;
+    ySelectIndex=0;
 }
 
 void SimpleCsvLogAnalyzer::tracerEvent(QMouseEvent *event)
@@ -695,20 +824,20 @@ void SimpleCsvLogAnalyzer::tracerEvent(QMouseEvent *event)
     y[1] = 0;
     verticalLine->setData(x, y);
     QList<double> ret;
-    tracer->setGraphKey(mousePlotCoordX);
+    tracer->position->setCoords(mousePlotCoordX, mousePlotCoordY);
+   // tracer->setGraphKey(mousePlotCoordX);
+
     ui->plot1->replot();
     zoomCursorCenter = tracer->position->key();
     //qDebug() << "Slope of curve at:" << mousePlotCoordX << "is:" << calculateSlopeOfCurve(mousePlotCoordX);
     switch (plotType) {
     case PLOT_Y_VS_POINT_NUM:
         ret = calculateSlopeOfCurve(tracer->position->key());
-        ui->statusbar->showMessage(QString("%1: %2, %3: %4, Left Slope: %5, Right Slope:%6")
+        ui->statusbar->showMessage(QString("%1:   %2, %3:   %4")
                                    .arg(ui->plot1->xAxis->label())
                                    .arg(QString::number(tracer->position->key(),'f',2))
                                    .arg(ui->plot1->yAxis->label())
-                                   .arg(QString::number(tracer->position->value(),'f',2))
-                                   .arg(QString::number(ret[0],'f',2))
-                .arg(QString::number(ret[1],'f',2)));
+                                       .arg(QString::number(tracer->position->value(),'f',0)));
         break;
     case PLOT_Y_VS_X:
         ui->statusbar->showMessage(QString("%1: %2, %3: %4, Y/X: %5, Y/X of Mouse: %6").arg(ui->plot1->xAxis->label())
@@ -1004,53 +1133,48 @@ void SimpleCsvLogAnalyzer::on_dataListY_customContextMenuRequested(const QPoint 
     labelListContextMenu->exec(QCursor::pos());
 }
 
-void SimpleCsvLogAnalyzer::on_DataDerivator_clicked()
+void SimpleCsvLogAnalyzer::on_DataDerivator_clicked()// fit slace Y
 {
-
-    //    QMessageBox msgBox;
-    //    msgBox.setText(QString("Screen Resolution: W:%1, H:%2")
-    //                   .arg(qApp->desktop()->width())
-    //                   .arg(qApp->desktop()->height()));
-    //    msgBox.exec();
-    QStringList labelList;
-    for(int i=0;i<ui->dataListY->count();++i){
-        if(!ui->dataListY->item(i)->text().startsWith(mathStringStart)){
-            labelList << ui->dataListY->item(i)->text();
-        }
+    if(plot_count == 0)
+    {
+        return;
     }
-    DataMath *math = new DataMath(labelList,mathOperatorsList);
-#ifdef Q_OS_ANDROID
-    math->showMaximized();
-#endif
-    //    math->showMaximized();
-    int ret = math->exec();
+    startBusy();
+    tracer->setGraph(nullptr);
+    ui->plot1->replot();
 
-    //connect(math,SIGNAL())
-    //qDebug() << "Return:" << ret;
-    qDebug() << "Math ops: " << math->mathOps;
+    ySelectIndex++;
+    ySelectIndex %=plot_count;
 
-    if(ret){
-        if(math->mathOps.isEmpty()){
-            ui->statusbar->showMessage("Empty formula for derived data!");
-            showMessage("Empty formula for derived data!");
-        } else {
-            createDerivedDataLabel(math->mathOps);
-            //            QString derivedDataLabel;
-            //            derivedDataLabel += mathStringStart;
-            //            for (int i=0;i<math->mathOps.length();++i) {
-            //                derivedDataLabel += math->mathOps[i];
-            //            }
-            //            derivedDataLabel += mathStringEnd;
-            //            ui->dataListY->addItem(derivedDataLabel);
-            //            ui->dataListX->addItem(derivedDataLabel);
-            //            QVector<double> values = createDerivedDataLabel(math->mathOps);
-            //            qDebug() << "Derived data  name:" << derivedDataLabel << "data length:" << values.length();
-            //            derivedDataVector.append(values);
-            //            derivedDataVectorLabels.append(derivedDataLabel);
-        }
+    xVals.clear();
+    yVals.clear();
+
+    auto plotData = ui->plot1->graph(ySelectIndex)->data();
+    for (int i = 0 ; i < plotData->size() ; ++i)
+    {
+        xVals.append(plotData->at(i)->key);
+        yVals.append(plotData->at(i)->value);
     }
 
-    math->deleteLater();
+    stats = calculateStatisticalData(xVals,yVals,false);
+
+    populateStatisticsLabels();
+
+    valuePlot[ySelectIndex]->rescaleKeyAxis();
+
+    ui->plot1->yAxis->setLabel(valuePlot[ySelectIndex]->name());
+
+    double span = stats.y.span;
+    if(span==0)
+    {
+        span = 10;
+    }
+    ui->plot1->yAxis->setRange(stats.y.min-0.1*span,stats.y.max+0.1*span);
+    ui->plot1->replot();
+    qApp->processEvents();
+    ui->rightTabs->setCurrentIndex(0);
+    setupTracer();
+    stopBusy();
 }
 
 void SimpleCsvLogAnalyzer::on_actionData_Derivator_triggered()
@@ -1120,60 +1244,66 @@ QString SimpleCsvLogAnalyzer::getProperLabelName(QString name)
 
 void SimpleCsvLogAnalyzer::on_predefinedPlot1_clicked()
 {
-    // Speed (OBD) vs Time
-    QString properName = getProperLabelName("Speed (OBD)");
+    QString properName = getProperLabelName("Get Power Ch A");
+    addPlotGraph(properName);
 
-    if(properName.isEmpty()){
-        showMessage("Cannot find or derive selected label!\nAdd selected label(s) to \"what to log\" list "
-                    "in your Torque app to favor this type of plot\n"
-                    "Or retry with another log file that contains selected label");
-    } else {
-        // add time info for x axis
-        plotGraph("",properName);
-    }
+    properName = getProperLabelName("Get Power Ch B");
+    addPlotGraph(properName);
 
+    properName = getProperLabelName("Get Power Ch C");
+    addPlotGraph(properName);
+
+    properName = getProperLabelName("Get Power Ch D");
+    addPlotGraph(properName);
+    ui->rightTabs->setCurrentIndex(2);
 }
 
 void SimpleCsvLogAnalyzer::on_predefinedPlot2_clicked()
 {
-    // Speed (GPS) vs Time
-    QString properName = getProperLabelName("Speed (GPS)");
+    QString properName = getProperLabelName("DutyCycle PWM A");
+    addPlotGraph(properName);
 
-    if(properName.isEmpty()){
-        showMessage("Cannot find or derive selected label!\nAdd selected label(s) to \"what to log\" list "
-                    "in your Torque app to favor this type of plot or retry with another log file that contains selected label");
-    } else {
-        // add time info for x axis
-        plotGraph("",properName);
-    }
+    properName = getProperLabelName("DutyCycle PWM B");
+    addPlotGraph(properName);
+
+    properName = getProperLabelName("DutyCycle PWM C");
+    addPlotGraph(properName);
+
+    properName = getProperLabelName("DutyCycle PWM D");
+    addPlotGraph(properName);
+    ui->rightTabs->setCurrentIndex(2);
 }
 
 void SimpleCsvLogAnalyzer::on_predefinedPlot3_clicked()
 {
-    // Altitude vs Time
-    QString properName = getProperLabelName("Altitude");
+    QString properName = getProperLabelName("dedect / cutoff limit A");
+    addPlotGraph(properName);
 
-    if(properName.isEmpty()){
-        showMessage("Cannot find or derive selected label!\nAdd selected label(s) to \"what to log\" list "
-                    "in your Torque app to favor this type of plot or retry with another log file that contains selected label");
-    } else {
-        // add time info for x axis
-        plotGraph("",properName);
-    }
+    properName = getProperLabelName("dedect / cutoff limit B");
+    addPlotGraph(properName);
+
+    properName = getProperLabelName("dedect / cutoff limit C");
+    addPlotGraph(properName);
+
+    properName = getProperLabelName("dedect / cutoff limit D");
+    addPlotGraph(properName);
+    ui->rightTabs->setCurrentIndex(2);
 }
 
 void SimpleCsvLogAnalyzer::on_predefinedPlot4_clicked()
 {
-    // Avg. Consumption vs Time
-    QString properName = getProperLabelName("Trip average");
+    QString properName = getProperLabelName("dedect current A");
+    addPlotGraph(properName);
 
-    if(properName.isEmpty()){
-        showMessage("Cannot find or derive selected label!\nAdd selected label(s) to \"what to log\" list "
-                    "in your Torque app to favor this type of plot or retry with another log file that contains selected label");
-    } else {
-        // add time info for x axis
-        plotGraph("",properName);
-    }
+    properName = getProperLabelName("dedect current B");
+    addPlotGraph(properName);
+
+    properName = getProperLabelName("dedect current C");
+    addPlotGraph(properName);
+
+    properName = getProperLabelName("dedect current D");
+    addPlotGraph(properName);
+    ui->rightTabs->setCurrentIndex(2);
 }
 
 void SimpleCsvLogAnalyzer::on_predefinedPlot5_clicked()
@@ -1323,4 +1453,20 @@ void SimpleCsvLogAnalyzer::on_predefinedPlot10_clicked()
         }
 
     }
+}
+
+void SimpleCsvLogAnalyzer::onMouseWheel(QWheelEvent *event)
+{
+    //QCustomPlot *plot = qobject_cast<QCustomPlot *>(sender());
+    if (QApplication::keyboardModifiers() == Qt::ShiftModifier)
+    {
+        double factor = (event->angleDelta().y() > 0) ? 0.9 : 1.1;
+        ui->plot1->yAxis->scaleRange(factor);
+    }
+    else
+    {
+       // ui->plot1->xAxis->scaleRange(1.1);
+       // ui->plot1->yAxis->scaleRange(1.1);
+    }
+    ui->plot1->replot();
 }

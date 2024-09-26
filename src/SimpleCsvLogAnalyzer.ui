@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>721</height>
+    <height>725</height>
    </rect>
   </property>
   <property name="font">
@@ -16,7 +16,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>SimpleCsvLogAnalyzer</string>
+   <string>GTM CSV Log Analyzer V1.3 [ Coskun ERGAN ]</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -276,11 +276,13 @@
      <layout class="QHBoxLayout" name="mainHorizontalLayout">
       <item>
        <widget class="QTabWidget" name="rightTabs">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="font">
          <font>
           <family>Arial</family>
           <pointsize>10</pointsize>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -304,7 +306,6 @@
              <font>
               <family>Arial</family>
               <pointsize>7</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -340,7 +341,6 @@
                  <font>
                   <family>Arial</family>
                   <pointsize>9</pointsize>
-                  <weight>75</weight>
                   <bold>true</bold>
                  </font>
                 </property>
@@ -361,7 +361,6 @@
                  <font>
                   <family>Arial</family>
                   <pointsize>11</pointsize>
-                  <weight>75</weight>
                   <bold>true</bold>
                  </font>
                 </property>
@@ -391,68 +390,7 @@
              </layout>
             </item>
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_5">
-              <item>
-               <widget class="QLabel" name="label_3">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>9</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>X Axis Data List</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QListWidget" name="dataListX">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>11</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="editTriggers">
-                 <set>QAbstractItemView::DoubleClicked</set>
-                </property>
-                <property name="showDropIndicator" stdset="0">
-                 <bool>false</bool>
-                </property>
-                <property name="dragDropMode">
-                 <enum>QAbstractItemView::NoDragDrop</enum>
-                </property>
-                <property name="defaultDropAction">
-                 <enum>Qt::IgnoreAction</enum>
-                </property>
-                <property name="selectionMode">
-                 <enum>QAbstractItemView::SingleSelection</enum>
-                </property>
-               </widget>
-              </item>
-             </layout>
+             <layout class="QVBoxLayout" name="verticalLayout_5"/>
             </item>
            </layout>
           </item>
@@ -462,7 +400,6 @@
              <font>
               <family>Arial</family>
               <pointsize>7</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -488,12 +425,11 @@
                <font>
                 <family>Arial</family>
                 <pointsize>9</pointsize>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
               <property name="text">
-               <string>Plot Selected Data vs Index</string>
+               <string>       Add Plot Data       </string>
               </property>
               <property name="icon">
                <iconset resource="../icons.qrc">
@@ -522,50 +458,15 @@
                <font>
                 <family>Arial</family>
                 <pointsize>9</pointsize>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
               <property name="text">
-               <string>Plot Selected Y-X Data</string>
+               <string>         Clear Plot Data      </string>
               </property>
               <property name="icon">
                <iconset resource="../icons.qrc">
                 <normaloff>:/images/images/plotxy.png</normaloff>:/images/images/plotxy.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>48</width>
-                <height>48</height>
-               </size>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextUnderIcon</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QToolButton" name="DataDerivator">
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>Arial</family>
-                <pointsize>9</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>Data Derivator</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/images/images/function.png</normaloff>:/images/images/function.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -600,7 +501,9 @@
             </property>
             <property name="font">
              <font>
+              <family>Arial</family>
               <pointsize>11</pointsize>
+              <bold>true</bold>
              </font>
             </property>
             <property name="layoutDirection">
@@ -610,7 +513,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>Speed (OBD) vs Time</string>
+             <string>4x Get Powers</string>
             </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
@@ -640,7 +543,9 @@
             </property>
             <property name="font">
              <font>
+              <family>Arial</family>
               <pointsize>11</pointsize>
+              <bold>true</bold>
              </font>
             </property>
             <property name="layoutDirection">
@@ -650,7 +555,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>Speed (GPS) vs Time</string>
+             <string>4x DutyCycle</string>
             </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
@@ -680,7 +585,9 @@
             </property>
             <property name="font">
              <font>
+              <family>Arial</family>
               <pointsize>11</pointsize>
+              <bold>true</bold>
              </font>
             </property>
             <property name="layoutDirection">
@@ -690,7 +597,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>RPM vs Time</string>
+             <string>---</string>
             </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
@@ -720,7 +627,9 @@
             </property>
             <property name="font">
              <font>
+              <family>Arial</family>
               <pointsize>11</pointsize>
+              <bold>true</bold>
              </font>
             </property>
             <property name="layoutDirection">
@@ -730,7 +639,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>LTFT1 vs Time</string>
+             <string>---</string>
             </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
@@ -760,7 +669,9 @@
             </property>
             <property name="font">
              <font>
+              <family>Arial</family>
               <pointsize>11</pointsize>
+              <bold>true</bold>
              </font>
             </property>
             <property name="layoutDirection">
@@ -770,7 +681,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>STFT1 vs Time</string>
+             <string>---</string>
             </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
@@ -800,7 +711,9 @@
             </property>
             <property name="font">
              <font>
+              <family>Arial</family>
               <pointsize>11</pointsize>
+              <bold>true</bold>
              </font>
             </property>
             <property name="layoutDirection">
@@ -810,7 +723,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>LTFT1+STFT1 vs RPM</string>
+             <string>---</string>
             </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
@@ -840,7 +753,9 @@
             </property>
             <property name="font">
              <font>
+              <family>Arial</family>
               <pointsize>11</pointsize>
+              <bold>true</bold>
              </font>
             </property>
             <property name="layoutDirection">
@@ -850,7 +765,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>Altitude vs Time</string>
+             <string>4x Dedect CutOff Limits</string>
             </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
@@ -880,7 +795,9 @@
             </property>
             <property name="font">
              <font>
+              <family>Arial</family>
               <pointsize>11</pointsize>
+              <bold>true</bold>
              </font>
             </property>
             <property name="layoutDirection">
@@ -890,7 +807,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>Avg. Consumption vs Time</string>
+             <string>4 x Dedect Current</string>
             </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
@@ -920,7 +837,9 @@
             </property>
             <property name="font">
              <font>
+              <family>Arial</family>
               <pointsize>11</pointsize>
+              <bold>true</bold>
              </font>
             </property>
             <property name="layoutDirection">
@@ -930,7 +849,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>Speed (OBD) / RPM vs Time</string>
+             <string>---</string>
             </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
@@ -960,7 +879,9 @@
             </property>
             <property name="font">
              <font>
+              <family>Arial</family>
               <pointsize>11</pointsize>
+              <bold>true</bold>
              </font>
             </property>
             <property name="layoutDirection">
@@ -970,7 +891,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>LTFT1+STFT1 vs Time</string>
+             <string>--</string>
             </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
@@ -1003,7 +924,6 @@
     <font>
      <family>Arial</family>
      <pointsize>9</pointsize>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -1054,7 +974,6 @@
     <font>
      <family>Arial</family>
      <pointsize>10</pointsize>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -1079,7 +998,6 @@
     <font>
      <family>Arial</family>
      <pointsize>10</pointsize>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -1099,7 +1017,6 @@
     <font>
      <family>Arial</family>
      <pointsize>10</pointsize>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -1108,37 +1025,44 @@
    </property>
   </action>
   <action name="actionData_Derivator">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="../icons.qrc">
      <normaloff>:/images/images/function.png</normaloff>:/images/images/function.png</iconset>
    </property>
    <property name="text">
-    <string>Data Derivator</string>
+    <string>Fit Y Scale</string>
    </property>
    <property name="font">
     <font>
      <family>Arial</family>
      <pointsize>10</pointsize>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
   </action>
   <action name="actionPlot_SelectedData">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../icons.qrc">
      <normaloff>:/images/images/ploty.png</normaloff>:/images/images/ploty.png</iconset>
    </property>
    <property name="text">
-    <string>Plot Y</string>
+    <string/>
    </property>
    <property name="font">
     <font>
      <family>Arial</family>
      <pointsize>10</pointsize>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionplot_SelectedDataVsSelectedData">
@@ -1147,13 +1071,12 @@
      <normaloff>:/images/images/plotxy.png</normaloff>:/images/images/plotxy.png</iconset>
    </property>
    <property name="text">
-    <string>plot Y-X</string>
+    <string>Clear Plots</string>
    </property>
    <property name="font">
     <font>
      <family>Arial</family>
      <pointsize>10</pointsize>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -1170,7 +1093,6 @@
     <font>
      <family>Arial</family>
      <pointsize>10</pointsize>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -1187,7 +1109,6 @@
     <font>
      <family>Arial</family>
      <pointsize>10</pointsize>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
